@@ -29,7 +29,6 @@ export default function UserAddressCard() {
                   United States.
                 </p>
               </div>
-
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                   City/State
