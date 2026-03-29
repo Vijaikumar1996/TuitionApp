@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { useIsFetching, useIsMutating } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 import SignIn from "./pages/AuthPages/SignIn";
 // import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -21,13 +23,33 @@ import Reports from "./pages/Reports/Reports";
 
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
+import GlobalLoader from "./components/loader/GlobalLoader";
 import Home from "./pages/Dashboard/Home";
+import EnrollmentList from "./pages/Enrollments/EnrollmentList";
+import CreateEnrollment from "./pages/Enrollments/CreateEnrollment";
+import FeesPage from "./pages/Fees/FeesPage";
 
 export default function App() {
+  const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
+  const isLoading = isFetching || isMutating;
   return (
     <>
+      {isLoading ? <GlobalLoader /> : null}
       <Router>
         <ScrollToTop />
+
+        <Toaster
+          position='top-center'
+          reverseOrder={false}
+          toastOptions={{
+            duration: 3000,
+            style: {
+              fontSize: "14px",
+              zIndex: 999999,
+            },
+          }}
+        />
         <Routes>
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
@@ -35,18 +57,20 @@ export default function App() {
 
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/student" element={<StudentsList />} />
+            <Route path="/students" element={<StudentsList />} />
+            <Route path="/enrollments" element={<EnrollmentList />} />
+            <Route path="/enrollment/create" element={<CreateEnrollment />} />
             <Route path="/student/create" element={<CreateStudent />} />
-            <Route path="/batch" element={<BatchList />} />
+            <Route path="/batches" element={<BatchList />} />
             <Route path="/batch/create" element={<CreateBatch />} />
-            <Route path="/course" element={<CourseList />} />
+            <Route path="/courses" element={<CourseList />} />
             <Route path="/course/create" element={<CreateCourse />} />
             <Route path="/payment/create" element={<CreatePayment />} />
             <Route path="/payments" element={<PaymentList />} />
-            <Route path="/pendings" element={<PendingList />} />
+            <Route path="/pendings" element={<FeesPage />} />
             <Route path="/reports" element={<Reports />} />
 
-           
+
 
 
 

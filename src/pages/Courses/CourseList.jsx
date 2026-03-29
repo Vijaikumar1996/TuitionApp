@@ -1,24 +1,72 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
+import { useCourses } from "../../queries/useCourses";
+import EditCourse from "./EditCourse";
+import DataTable from "../../components/common/DataTable";
 
 export default function CourseList() {
   const navigate = useNavigate();
 
-  // ✅ Dummy Data
-  const coursesData = [
-    { id: 1, name: "8th Standard", description: "State Board", status: "Active" },
-    { id: 2, name: "9th Standard", description: "CBSE", status: "Active" },
-    { id: 3, name: "Typewriting Lower", description: "Beginner Level", status: "Inactive" },
-  ];
+  const { data: coursesData = [], isLoading } = useCourses();
 
   const [search, setSearch] = useState("");
+  const [editCourse, setEditCourse] = useState(null);
 
-  // ✅ Filter Logic
   const filteredCourses = useMemo(() => {
     return coursesData.filter((course) =>
       course.name.toLowerCase().includes(search.toLowerCase())
     );
-  }, [search]);
+  }, [search, coursesData]);
+
+  const columns = useMemo(() => [
+    {
+      accessorKey: "name",
+      header: "Course Name"
+    },
+    {
+      accessorKey: "fee_type",
+      header: "Fee Type"
+    },
+    {
+      accessorKey: "fee_amount",
+      header: "Fee Amount",
+      cell: (info) => `₹${info.getValue()}`
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.original.status;
+
+        return (
+          <span
+            className={`px-2 py-1 text-xs rounded-full ${status === "Active"
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-100 text-gray-600"
+              }`}
+          >
+            {status}
+          </span>
+        );
+      }
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <button
+          onClick={() => setEditCourse(row.original)}
+          className="text-blue-600 hover:underline"
+        >
+          Edit
+        </button>
+      )
+    }
+  ], []);
+
+  const pinnedColumns = useMemo(() => ({
+    left: ["name"],
+  }), []);
 
   return (
     <div className="bg-white p-5 rounded-xl shadow">
@@ -47,74 +95,20 @@ export default function CourseList() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm border">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                Course Name
-              </th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                Description
-              </th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                Status
-              </th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                Actions
-              </th>
-            </tr>
-          </thead>
+      <DataTable
+        data={filteredCourses}
+        columns={columns}
+        pageSize={10}
+        pinnedColumns={pinnedColumns}
+        emptyMessage="No courses found"
+      />
 
-          <tbody>
-            {filteredCourses.length > 0 ? (
-              filteredCourses.map((course) => (
-                <tr key={course.id} className="border-t hover:bg-gray-50">
-
-                  <td className="px-4 py-3">{course.name}</td>
-
-                  <td className="px-4 py-3 text-gray-600">
-                    {course.description}
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        course.status === "Active"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {course.status}
-                    </span>
-                  </td>
-
-                  <td className="px-4 py-3 flex gap-3 text-sm">
-                    <button
-                      onClick={() => navigate(`/courses/edit/${course.id}`)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </button>
-
-                    <button className="text-red-600 hover:underline">
-                      Disable
-                    </button>
-                  </td>
-
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="px-4 py-6 text-center text-gray-500">
-                  No courses found
-                </td>
-              </tr>
-            )}
-          </tbody>
-
-        </table>
-      </div>
+      {editCourse && (
+        <EditCourse
+          course={editCourse}
+          onClose={() => setEditCourse(null)}
+        />
+      )}
 
     </div>
   );

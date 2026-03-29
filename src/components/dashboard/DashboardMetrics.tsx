@@ -1,6 +1,7 @@
 
 
-export default function DashboardMetrics() {
+export default function DashboardMetrics({ data }) {
+  console.log("Dashboard Metrics Data:", data);
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-4 md:gap-6">
       {/* <!-- Metric Item Start --> */}
@@ -11,7 +12,7 @@ export default function DashboardMetrics() {
               Total Students
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              3,782
+              {data?.TotalStudents || 0}
             </h4>
           </div>
 
@@ -30,7 +31,7 @@ export default function DashboardMetrics() {
               Active Enrollments
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+              {data?.ActiveEnrollments || 0}
             </h4>
           </div>
 
@@ -49,7 +50,7 @@ export default function DashboardMetrics() {
               Fees Collected (This Month)
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+              ₹{data?.FeesCollected || 0}
             </h4>
           </div>
 
@@ -68,7 +69,7 @@ export default function DashboardMetrics() {
               Pending Fees
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+              ₹{data?.PendingFees || 0}
             </h4>
           </div>
 

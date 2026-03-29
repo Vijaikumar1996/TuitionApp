@@ -38,20 +38,26 @@ const navItems: NavItem[] = [
   {
     icon: <DocsIcon />,
     name: "Courses",
-    path: "/course"
-  },
-  {
-    icon: <GroupIcon />,
-    name: "Students",
-    path: "/student",
+    path: "/courses"
   },
   {
     icon: <CalenderIcon />,
     name: "Batches",
-    path: "/batch",
+    path: "/batches",
   },
   {
-    icon: <DollarLineIcon />,
+    icon: <GroupIcon />,
+    name: "Students",
+    path: "/students",
+  },
+  {
+    icon: <GroupIcon />,
+    name: "Enrollments",
+    path: "/enrollments",
+  },
+
+  {
+    icon: <ListIcon />,
     name: "Payments",
     path: "/payments",
   },
@@ -64,15 +70,15 @@ const navItems: NavItem[] = [
   //   ],
   // },
   {
-    icon: <AlertHexaIcon />,
-    name: "Pendings",
+    icon: <DollarLineIcon />,
+    name: "Fees",
     path: "/pendings",
   },
-  {
-    icon: <PieChartIcon />,
-    name: "Reports",
-    path: "/reports",
-  },
+  // {
+  //   icon: <PieChartIcon />,
+  //   name: "Reports",
+  //   path: "/reports",
+  // },
 
   // {
   //   name: "Forms",
