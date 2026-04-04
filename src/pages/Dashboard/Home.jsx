@@ -7,6 +7,7 @@ import { useDashboard } from "../../queries/useDashboard";
 
 export default function Home() {
   const { data, isLoading } = useDashboard();
+  console.log("Dashboard Data:", data);
   return (
     <>
       <PageMeta
@@ -24,12 +25,7 @@ export default function Home() {
         </div>
 
         {/* Chart */}
-        {
-          data?.MonthlyRevenue &&
-          <div className="col-span-12 xl:col-span-6">
-            <MonthlySalesChart data={data?.MonthlyRevenue} />
-          </div>
-        }
+
 
 
         {/* Recent Payments */}
@@ -44,7 +40,12 @@ export default function Home() {
             <BatchPending data={data?.BatchPending} />
           </div>
         }
-
+        {
+          data?.MonthlyRevenue &&
+          <div className="col-span-12 xl:col-span-6">
+            <MonthlySalesChart data={data?.MonthlyRevenue} />
+          </div>
+        }
 
       </div>
     </>

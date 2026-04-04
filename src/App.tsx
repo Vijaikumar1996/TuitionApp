@@ -28,6 +28,7 @@ import Home from "./pages/Dashboard/Home";
 import EnrollmentList from "./pages/Enrollments/EnrollmentList";
 import CreateEnrollment from "./pages/Enrollments/CreateEnrollment";
 import FeesPage from "./pages/Fees/FeesPage";
+import PrivateRoute from "./PrivateRoute";
 
 export default function App() {
   const isFetching = useIsFetching();
@@ -51,36 +52,36 @@ export default function App() {
           }}
         />
         <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/home" element={<Home />} />
+          <Route element={<PrivateRoute />}>
+            <Route element={<AppLayout />}>
+              <Route index path="/home" element={<Home />} />
 
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/students" element={<StudentsList />} />
-            <Route path="/enrollments" element={<EnrollmentList />} />
-            <Route path="/enrollment/create" element={<CreateEnrollment />} />
-            <Route path="/student/create" element={<CreateStudent />} />
-            <Route path="/batches" element={<BatchList />} />
-            <Route path="/batch/create" element={<CreateBatch />} />
-            <Route path="/courses" element={<CourseList />} />
-            <Route path="/course/create" element={<CreateCourse />} />
-            <Route path="/payment/create" element={<CreatePayment />} />
-            <Route path="/payments" element={<PaymentList />} />
-            <Route path="/pendings" element={<FeesPage />} />
-            <Route path="/reports" element={<Reports />} />
-
-
+              {/* Others Page */}
+              <Route path="/profile" element={<UserProfiles />} />
+              <Route path="/students" element={<StudentsList />} />
+              <Route path="/enrollments" element={<EnrollmentList />} />
+              <Route path="/enrollment/create" element={<CreateEnrollment />} />
+              <Route path="/student/create" element={<CreateStudent />} />
+              <Route path="/batches" element={<BatchList />} />
+              <Route path="/batch/create" element={<CreateBatch />} />
+              <Route path="/courses" element={<CourseList />} />
+              <Route path="/course/create" element={<CreateCourse />} />
+              <Route path="/payment/create" element={<CreatePayment />} />
+              <Route path="/payments" element={<PaymentList />} />
+              <Route path="/fees" element={<FeesPage />} />
+              <Route path="/reports" element={<Reports />} />
 
 
 
 
 
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
+
+
+              {/* Charts */}
+              <Route path="/line-chart" element={<LineChart />} />
+              <Route path="/bar-chart" element={<BarChart />} />
+            </Route>
           </Route>
-
           {/* Auth Layout */}
           <Route path="/" element={<SignIn />} />
           {/* <Route path="/signup" element={<SignUp />} /> */}

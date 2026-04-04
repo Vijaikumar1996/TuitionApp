@@ -61,43 +61,11 @@ const navItems: NavItem[] = [
     name: "Payments",
     path: "/payments",
   },
-  // {
-  //   name: "Payments",
-  //   icon: <DollarLineIcon />,
-  //   subItems: [
-  //     { name: "Add Payment", path: "/payment/create", pro: false },
-  //     { name: "Payment List", path: "/payments", pro: false },
-  //   ],
-  // },
   {
     icon: <DollarLineIcon />,
     name: "Fees",
-    path: "/pendings",
+    path: "/fees",
   },
-  // {
-  //   icon: <PieChartIcon />,
-  //   name: "Reports",
-  //   path: "/reports",
-  // },
-
-  // {
-  //   name: "Forms",
-  //   icon: <ListIcon />,
-  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  // },
-  // {
-  //   name: "Tables",
-  //   icon: <TableIcon />,
-  //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  // },
-  // {
-  //   name: "Pages",
-  //   icon: <PageIcon />,
-  //   subItems: [
-  //     { name: "Blank Page", path: "/blank", pro: false },
-  //     { name: "404 Error", path: "/error-404", pro: false },
-  //   ],
-  // },
 ];
 
 const othersItems: NavItem[] = [
@@ -132,7 +100,7 @@ const othersItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleSidebar, toggleMobileSidebar } = useSidebar();
   const location = useLocation();
 
   const [openSubmenu, setOpenSubmenu] = useState<{
@@ -149,6 +117,14 @@ const AppSidebar: React.FC = () => {
     (path: string) => location.pathname === path,
     [location.pathname]
   );
+
+  const handleToggle = () => {
+    if (window.innerWidth >= 1024) {
+     // toggleSidebar();
+    } else {
+      toggleMobileSidebar();
+    }
+  };
 
   useEffect(() => {
     let submenuMatched = false;
@@ -202,7 +178,9 @@ const AppSidebar: React.FC = () => {
   const renderMenuItems = (items: NavItem[], menuType: "main" | "others") => (
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
-        <li key={nav.name}>
+        <li key={nav.name}
+          onClick={handleToggle}
+        >
           {nav.subItems ? (
             <button
               onClick={() => handleSubmenuToggle(index, menuType)}
@@ -335,7 +313,7 @@ const AppSidebar: React.FC = () => {
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <span className="text-xl font-bold text-gray-800 dark:text-white">
-                Tutition App
+                Tuition App
               </span>
             </>
           ) : (

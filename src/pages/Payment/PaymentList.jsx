@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from "react";
 import DataTable from "../../components/common/DataTable";
 import Select from "react-select";
@@ -12,29 +11,23 @@ export default function PaymentsPage() {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
   }
 
-  // UI state
   const [month, setMonth] = useState(getCurrentMonth());
   const [selectedEnrollment, setSelectedEnrollment] = useState(null);
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [mode, setMode] = useState("");
-  const [search, setSearch] = useState("");
 
-  // 🔥 Fetch batches directly
   const { data: batchesData = [] } = useBatches();
 
-  // Applied filters
   const [filters, setFilters] = useState({
     month: getCurrentMonth(),
     batchId: null,
     enrollmentId: null,
     mode: null,
-    search: null,
   });
 
-  // Enrollments
-  const { data: enrollments = [], isLoading: enrollmentsLoading } = useEnrollments();
+  const { data: enrollments = [], isLoading: enrollmentsLoading } =
+    useEnrollments();
 
-  // 🔥 Batch options (from batches API)
   const batchOptions = useMemo(
     () =>
       batchesData.map((b) => ({
@@ -44,15 +37,12 @@ export default function PaymentsPage() {
     [batchesData]
   );
 
-  // 🔥 Filter enrollments based on batch
   const filteredEnrollments = useMemo(() => {
     if (!selectedBatch) return enrollments;
-    console.log("Filtering enrollments for batch:", selectedBatch);
     return enrollments.filter(
       (e) => String(e.batchId) === String(selectedBatch.value)
     );
   }, [enrollments, selectedBatch]);
-
 
   const enrollmentOptions = useMemo(
     () =>
@@ -63,53 +53,38 @@ export default function PaymentsPage() {
     [filteredEnrollments]
   );
 
-  // Payments API
   const { data = [], isLoading } = usePayments(filters);
 
-  // Search handler
   const handleSearch = () => {
     setFilters({
       month,
       batchId: selectedBatch?.value || null,
       enrollmentId: selectedEnrollment?.value || null,
       mode: mode || null,
-      search: search || null,
     });
   };
 
-  // Reset handler
   const handleReset = () => {
     const currentMonth = getCurrentMonth();
 
     setMonth(currentMonth);
     setSelectedEnrollment(null);
+    setSelectedBatch(null);
     setMode("");
-    setSearch("");
 
     setFilters({
       month: currentMonth,
       batchId: null,
       enrollmentId: null,
       mode: null,
-      search: null,
     });
   };
 
-  // Table columns
   const columns = useMemo(
     () => [
-      {
-        accessorKey: "Student_Name",
-        header: "Student",
-      },
-      {
-        accessorKey: "Course_Name",
-        header: "Course",
-      },
-      {
-        accessorKey: "Batch_Name",
-        header: "Batch",
-      },
+      { accessorKey: "Student_Name", header: "Student" },
+      { accessorKey: "Course_Name", header: "Course" },
+      { accessorKey: "Batch_Name", header: "Batch" },
       {
         accessorKey: "Amount",
         header: "Amount",
@@ -121,19 +96,16 @@ export default function PaymentsPage() {
         cell: ({ getValue }) =>
           new Date(getValue()).toLocaleDateString("en-IN"),
       },
-      {
-        accessorKey: "Payment_Mode",
-        header: "Mode",
-      },
+      { accessorKey: "Payment_Mode", header: "Mode" },
       {
         accessorKey: "Month",
         header: "Fee Month",
         cell: ({ getValue }) =>
           getValue()
             ? new Date(getValue()).toLocaleDateString("en-IN", {
-              month: "short",
-              year: "numeric",
-            })
+                month: "short",
+                year: "numeric",
+              })
             : "-",
       },
     ],
@@ -143,29 +115,29 @@ export default function PaymentsPage() {
   if (isLoading) return <div className="p-5">Loading payments...</div>;
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow">
-
-      {/* Header */}
+    <div className="bg-white p-5 rounded-xl shadow w-full">
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-3">Payments</h2>
 
-        <div className="flex flex-wrap gap-3 items-end">
+        {/* ✅ FINAL GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-3 items-end">
 
           {/* Month */}
-          <div>
+          <div className="lg:col-span-1">
             <label className="text-xs text-gray-500">Month</label>
             <input
               type="month"
               value={month.slice(0, 7)}
               onChange={(e) => setMonth(e.target.value + "-01")}
-              className="border px-3 py-2 rounded block"
+              className="border pl-1 py-2 rounded w-full"
             />
           </div>
 
           {/* Batch */}
-          <div className="min-w-[200px]">
+          <div className="lg:col-span-2">
             <label className="text-xs text-gray-500">Batch</label>
             <Select
+              styles={{ container: (base) => ({ ...base, width: "100%" }) }}
               options={batchOptions}
               value={selectedBatch}
               onChange={setSelectedBatch}
@@ -174,10 +146,11 @@ export default function PaymentsPage() {
             />
           </div>
 
-          {/* Enrollment */}
-          <div className="min-w-[250px]">
+          {/* Student */}
+          <div className="lg:col-span-2">
             <label className="text-xs text-gray-500">Student / Course</label>
             <Select
+              styles={{ container: (base) => ({ ...base, width: "100%" }) }}
               options={enrollmentOptions}
               value={selectedEnrollment}
               onChange={setSelectedEnrollment}
@@ -188,12 +161,12 @@ export default function PaymentsPage() {
           </div>
 
           {/* Mode */}
-          <div>
+          <div className="lg:col-span-1">
             <label className="text-xs text-gray-500">Mode</label>
             <select
               value={mode}
               onChange={(e) => setMode(e.target.value)}
-              className="border px-3 py-2 rounded block"
+              className="border px-3 py-2 rounded w-full"
             >
               <option value="">All</option>
               <option value="Cash">Cash</option>
@@ -202,37 +175,29 @@ export default function PaymentsPage() {
             </select>
           </div>
 
-          {/* Search */}
-          {/* <div>
-            <label className="text-xs text-gray-500">Search</label>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Student, course..."
-              className="border px-3 py-2 rounded block w-[200px]"
-            />
-          </div> */}
+          {/* Search Button */}
+          <div className="lg:col-span-1">
+            <button
+              onClick={handleSearch}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded"
+            >
+              Search
+            </button>
+          </div>
 
-          {/* Buttons */}
-          <button
-            onClick={handleSearch}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Search
-          </button>
-
-          <button
-            onClick={handleReset}
-            className="border px-4 py-2 rounded hover:bg-gray-100"
-          >
-            Reset
-          </button>
+          {/* Reset Button */}
+          <div className="lg:col-span-1">
+            <button
+              onClick={handleReset}
+              className="w-full border px-4 py-2 rounded"
+            >
+              Reset
+            </button>
+          </div>
 
         </div>
       </div>
 
-      {/* Table */}
       <DataTable
         data={data}
         columns={columns}

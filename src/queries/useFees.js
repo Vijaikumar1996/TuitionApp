@@ -31,6 +31,9 @@ export const usePayFee = (filters) => {
       queryClient.invalidateQueries({
         queryKey: ["fees"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["payments"],
+      });
     },
   });
 };

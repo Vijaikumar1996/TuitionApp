@@ -83,7 +83,7 @@ export default function StudentsList() {
       </div>
 
       {/* Search */}
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <input
           type="text"
           placeholder="Search students..."
@@ -91,7 +91,7 @@ export default function StudentsList() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full md:w-64 border px-3 py-2 rounded"
         />
-      </div>
+      </div> */}
 
       {/* Table */}
       <DataTable

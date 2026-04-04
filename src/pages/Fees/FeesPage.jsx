@@ -1,15 +1,20 @@
-
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router";
 import DataTable from "../../components/common/DataTable";
 import { useFees, usePayFee } from "../../queries/useFees";
 import PayFee from "./PayFee";
 import Select from "react-select";
 import { useEnrollments } from "../../queries/useEnrollments";
-import { useBatches } from "../../queries/useBatches"; // 🔥 NEW
+import { useBatches } from "../../queries/useBatches";
 import { ChatIcon } from "../../icons";
 import toast from "react-hot-toast";
 
 export default function FeesPage() {
+  const location = useLocation();
+
+  // 🔥 Prevent double execution
+  const hasTriggered = useRef(false);
+
   function getCurrentMonth() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
@@ -29,14 +34,14 @@ export default function FeesPage() {
 
   const [selectedFee, setSelectedFee] = useState(null);
 
-  // 🔥 Fetch batches directly
+  // 🔥 Fetch batches
   const { data: batchesData = [] } = useBatches();
 
   // 🔥 Fetch enrollments
   const { data: enrollments = [], isLoading: enrollmentsLoading } =
     useEnrollments();
 
-  // 🔥 Batch options (from batches API)
+  // 🔥 Batch options
   const batchOptions = useMemo(
     () =>
       batchesData.map((b) => ({
@@ -46,10 +51,39 @@ export default function FeesPage() {
     [batchesData]
   );
 
-  // 🔥 Filter enrollments based on batch
+  // 🔥 AUTO SELECT BATCH FROM DASHBOARD (FIXED WITH useRef)
+  useEffect(() => {
+    if (
+      !hasTriggered.current &&
+      location.state?.batchId &&
+      batchOptions.length > 0
+    ) {
+      hasTriggered.current = true; // ✅ prevent double run
+
+      const batch = batchOptions.find(
+        (b) => String(b.value) === String(location.state.batchId)
+      );
+
+      if (batch) {
+        setSelectedBatch(batch);
+
+        setFilters((prev) => ({
+          ...prev,
+          batchId: batch.value,
+          status: "pending",
+        }));
+
+        toast.success(`Showing pending for ${location.state.batchName}`);
+
+        window.scrollTo({ top: 300, behavior: "smooth" });
+      }
+    }
+  }, [location.state, batchOptions]);
+
+  // 🔥 Filter enrollments
   const filteredEnrollments = useMemo(() => {
     if (!selectedBatch) return enrollments;
-    console.log("Filtering enrollments for batch:", enrollments);
+
     return enrollments.filter(
       (e) => String(e.batchId) === String(selectedBatch.value)
     );
@@ -129,14 +163,8 @@ ${studentList}
 
   const columns = useMemo(
     () => [
-      {
-        accessorKey: "Student_Name",
-        header: "Student",
-      },
-      {
-        accessorKey: "Batch_Name",
-        header: "Batch",
-      },
+      { accessorKey: "Student_Name", header: "Student" },
+      { accessorKey: "Batch_Name", header: "Batch" },
       {
         accessorKey: "Month",
         header: "Month",
@@ -176,7 +204,7 @@ ${studentList}
           const f = row.original;
 
           const handleWhatsApp = () => {
-            const phone = f.Phone_Number;
+            const phone = f.Parent_Phone;
 
             if (!phone) {
               toast.error("Phone number not available");
@@ -232,7 +260,6 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
 
   return (
     <div className="bg-white p-5 rounded-xl shadow">
-
       {/* Header */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-3">
@@ -259,23 +286,24 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 items-end">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-3 items-end">
 
           {/* Month */}
-          <div>
+          <div className="lg:col-span-1">
             <label className="text-xs text-gray-500">Month</label>
             <input
               type="month"
               value={month.slice(0, 7)}
               onChange={(e) => setMonth(e.target.value + "-01")}
-              className="border px-3 py-2 rounded block"
+              className="border pl-1 py-2 rounded w-full"
             />
           </div>
 
           {/* Batch */}
-          <div className="min-w-[200px]">
+          <div className="lg:col-span-2">
             <label className="text-xs text-gray-500">Batch</label>
             <Select
+              styles={{ container: (base) => ({ ...base, width: "100%" }) }}
               options={batchOptions}
               value={selectedBatch}
               onChange={setSelectedBatch}
@@ -284,10 +312,11 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
             />
           </div>
 
-          {/* Enrollment */}
-          <div className="min-w-[250px]">
+          {/* Student */}
+          <div className="lg:col-span-2">
             <label className="text-xs text-gray-500">Student / Course</label>
             <Select
+              styles={{ container: (base) => ({ ...base, width: "100%" }) }}
               options={enrollmentOptions}
               value={selectedEnrollment}
               onChange={setSelectedEnrollment}
@@ -298,12 +327,12 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
           </div>
 
           {/* Status */}
-          <div>
+          <div className="lg:col-span-1">
             <label className="text-xs text-gray-500">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="border px-3 py-2 rounded block"
+              className="border px-3 py-2 rounded w-full"
             >
               <option value="pending">Pending</option>
               <option value="paid">Paid</option>
@@ -311,20 +340,25 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
             </select>
           </div>
 
-          {/* Buttons */}
-          <button
-            onClick={handleSearch}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Search
-          </button>
+          {/* Search Button */}
+          <div className="lg:col-span-1">
+            <button
+              onClick={handleSearch}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded"
+            >
+              Search
+            </button>
+          </div>
 
-          <button
-            onClick={handleReset}
-            className="border px-4 py-2 rounded hover:bg-gray-100"
-          >
-            Reset
-          </button>
+          {/* Reset Button */}
+          <div className="lg:col-span-1">
+            <button
+              onClick={handleReset}
+              className="w-full border px-4 py-2 rounded"
+            >
+              Reset
+            </button>
+          </div>
 
         </div>
       </div>

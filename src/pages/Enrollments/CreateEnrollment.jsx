@@ -41,7 +41,10 @@ export default function CreateEnrollment() {
     return (
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow">
 
-            <PageBreadcrumb pageTitle="Add Enrollment" />
+            <h2 className="text-xl font-semibold mb-6">
+                Create Enrollment
+            </h2>
+
 
             <EnrollmentForm
                 title="Enroll Student"
@@ -51,6 +54,7 @@ export default function CreateEnrollment() {
                     startDate: new Date().toISOString().split("T")[0],
                 }}
                 isEditMode={false}
+                onCancel={() => navigate("/enrollments")}
             />
 
         </div>

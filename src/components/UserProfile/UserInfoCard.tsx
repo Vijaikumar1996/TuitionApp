@@ -1,15 +1,18 @@
+import { useSelector } from "react-redux";
 import { useModal } from "../../hooks/useModal";
 
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
+
+  const { user } = useSelector((state) => state.auth);
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
     closeModal();
   };
   return (
-    <div className="border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+    <div className="border-gray-200 rounded-2xl dark:border-gray-800 p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
@@ -22,7 +25,7 @@ export default function UserInfoCard() {
                 Institute Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Tuition Center
+                {user?.instituteName || "Tuition Center"}
               </p>
             </div>
 
@@ -31,7 +34,7 @@ export default function UserInfoCard() {
                 User Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Chowdhury
+                {user?.name || user?.username || "User"}
               </p>
             </div>
 
@@ -40,7 +43,7 @@ export default function UserInfoCard() {
                 Email address
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                vijaikumarcv@gmail.com
+                {user?.email || "No email"}
               </p>
             </div>
 
@@ -49,7 +52,7 @@ export default function UserInfoCard() {
                 Phone
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                +09 363 398 46
+                {user?.phone || "No phone"}
               </p>
             </div>
 
@@ -64,7 +67,7 @@ export default function UserInfoCard() {
           </div>
         </div>
 
-        <button
+        {/* <button
           onClick={openModal}
           className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
         >
@@ -84,7 +87,7 @@ export default function UserInfoCard() {
             />
           </svg>
           Edit
-        </button>
+        </button> */}
       </div>
 
 

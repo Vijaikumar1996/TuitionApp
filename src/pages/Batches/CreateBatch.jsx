@@ -37,7 +37,11 @@ export default function CreateBatch() {
     return (
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow">
 
-            <PageBreadcrumb pageTitle="Add Batch" />
+            {/* <PageBreadcrumb pageTitle="Add Batch" /> */}
+
+             <h2 className="text-xl font-semibold mb-6">
+                Create Batch
+            </h2>
 
             <BatchForm
                 //  courses={courses}

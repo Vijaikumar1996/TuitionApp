@@ -2,8 +2,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const apiClient = axios.create({
-  // baseURL: "http://localhost:7257/api/",
-  baseURL: "https://tuitionappapi.azurewebsites.net/api/",
+   baseURL: "http://localhost:7257/api/",
+//  baseURL: "https://tuitionappapi.azurewebsites.net/api/",
 
   // timeout: 10000,
 });
@@ -26,7 +26,7 @@ apiClient.interceptors.response.use(
       localStorage.removeItem("token");
 
       setTimeout(() => {
-        window.location.href = "/signin";
+        window.location.href = "/";
       }, 1500);
     }
 

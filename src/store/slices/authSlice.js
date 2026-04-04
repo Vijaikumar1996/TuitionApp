@@ -2,18 +2,37 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginApi } from "../../services/authService";
 import { jwtDecode } from "jwt-decode";
 
+// 🔥 Restore token & user on app load
+const token = localStorage.getItem("token");
+
+let user = null;
+
+if (token) {
+  try {
+    user = jwtDecode(token);
+    console.log("Restored user from token:", user);
+  } catch (err) {
+    console.error("Invalid token");
+    localStorage.removeItem("token");
+  }
+}
+
 // 🔥 Async login action
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await loginApi(credentials);
-      console.log(response);
+      console.log("Login Response:", response);
+
       const token = response.data.Token;
 
+      // 🔥 Save token in localStorage
       localStorage.setItem("token", token);
 
+      // 🔥 Decode token
       const decoded = jwtDecode(token);
+      console.log("Decoded JWT:", decoded);
 
       return {
         token,
@@ -30,8 +49,8 @@ export const loginUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
-    token: localStorage.getItem("token") || null,
+    user: user,   // 🔥 restored from token
+    token: token, // 🔥 restored from localStorage
     loading: false,
     error: null,
   },
@@ -39,6 +58,8 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+
+      // 🔥 Remove token
       localStorage.removeItem("token");
     },
   },
@@ -49,8 +70,9 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        debugger;
         state.loading = false;
+
+        // 🔥 Save user & token
         state.user = action.payload.user;
         state.token = action.payload.token;
       })
