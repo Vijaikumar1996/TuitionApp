@@ -8,11 +8,10 @@ import { useEnrollments } from "../../queries/useEnrollments";
 import { useBatches } from "../../queries/useBatches";
 import { ChatIcon } from "../../icons";
 import toast from "react-hot-toast";
+import { useMessageTemplates } from "../../queries/useMessageTemplate";
 
 export default function FeesPage() {
   const location = useLocation();
-
-  // 🔥 Prevent double execution
   const hasTriggered = useRef(false);
 
   function getCurrentMonth() {
@@ -24,6 +23,9 @@ export default function FeesPage() {
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedEnrollment, setSelectedEnrollment] = useState(null);
   const [status, setStatus] = useState("pending");
+
+  // ✅ Fetch templates once
+  const { data: templates = {} } = useMessageTemplates();
 
   const [filters, setFilters] = useState({
     month: getCurrentMonth(),
@@ -51,14 +53,14 @@ export default function FeesPage() {
     [batchesData]
   );
 
-  // 🔥 AUTO SELECT BATCH FROM DASHBOARD (FIXED WITH useRef)
+  // 🔥 AUTO SELECT BATCH FROM DASHBOARD
   useEffect(() => {
     if (
       !hasTriggered.current &&
       location.state?.batchId &&
       batchOptions.length > 0
     ) {
-      hasTriggered.current = true; // ✅ prevent double run
+      hasTriggered.current = true;
 
       const batch = batchOptions.find(
         (b) => String(b.value) === String(location.state.batchId)
@@ -74,7 +76,6 @@ export default function FeesPage() {
         }));
 
         toast.success(`Showing pending for ${location.state.batchName}`);
-
         window.scrollTo({ top: 300, behavior: "smooth" });
       }
     }
@@ -105,6 +106,7 @@ export default function FeesPage() {
   const { data = [], isLoading } = useFees(filters);
   const payMutation = usePayFee(filters.month);
 
+  // 🔍 Search
   const handleSearch = () => {
     setFilters({
       month,
@@ -114,6 +116,7 @@ export default function FeesPage() {
     });
   };
 
+  // 🔄 Reset
   const handleReset = () => {
     const currentMonth = getCurrentMonth();
 
@@ -130,37 +133,51 @@ export default function FeesPage() {
     });
   };
 
-  const getBulkMessage = (data) => {
+  // 🔥 Template formatter
+  const formatTemplate = (template, data) => {
+    if (!template) return "";
+
+    let result = template;
+
+    Object.keys(data).forEach((key) => {
+      result = result.replaceAll(`{{${key}}}`, data[key] ?? "");
+    });
+
+    return result;
+  };
+
+  // 📋 Bulk Message
+  const handleBulkMessage = async () => {
     const pending = data.filter((f) => f.Balance > 0);
 
-    if (pending.length === 0) return "";
+    if (pending.length === 0) {
+      toast.error("No pending students");
+      return;
+    }
 
-    const month = new Date(pending[0].Month).toLocaleDateString("ta-IN", {
+    const monthText = new Date(pending[0].Month).toLocaleDateString("ta-IN", {
       month: "long",
       year: "numeric",
     });
 
-    const studentList = pending
-      .map((f, index) => {
-        const name = f.Student_Name_Tamil
-          ? `${f.Student_Name_Tamil} (${f.Student_Name})`
-          : f.Student_Name;
-
-        return `${index + 1}. ${name} - ₹${f.Balance}`;
-      })
+    const student_list = pending
+      .map((f, index) => `${index + 1}. ${f.Student_Name} - ₹${f.Balance}`)
       .join("\n");
 
-    return `அனைத்து பெற்றோருக்கும் வணக்கம்,
+    const message = formatTemplate(templates.group, {
+      month: monthText,
+      student_list,
+    });
 
-${month} மாதத்திற்கான கட்டணம் கீழ்க்கண்ட மாணவர்களிடம் இன்னும் நிலுவையில் உள்ளது:
-
-${studentList}
-
-தயவுசெய்து விரைவில் கட்டணம் செலுத்தவும்.
-
-நன்றி 🙏`;
+    try {
+      await navigator.clipboard.writeText(message);
+      toast.success("Message copied! Paste in selected batch WhatsApp group.");
+    } catch {
+      toast.error("Copy failed");
+    }
   };
 
+  // 📊 Table Columns
   const columns = useMemo(
     () => [
       { accessorKey: "Student_Name", header: "Student" },
@@ -211,16 +228,16 @@ ${studentList}
               return;
             }
 
-            const message = `வணக்கம் ${f.Student_Name},
-
-${new Date(f.Month).toLocaleDateString("ta-IN", {
+            const monthText = new Date(f.Month).toLocaleDateString("ta-IN", {
               month: "long",
               year: "numeric",
-            })} மாதத்திற்கான கட்டணம் இன்னும் செலுத்தப்படவில்லை.
+            });
 
-செலுத்த வேண்டிய தொகை: ₹${f.Balance}
-
-நன்றி 🙏`;
+            const message = formatTemplate(templates.single, {
+              student_name: f.Student_Name,
+              month: monthText,
+              balance: f.Balance,
+            });
 
             const url = `https://wa.me/91${phone}?text=${encodeURIComponent(
               message
@@ -253,7 +270,7 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
         },
       },
     ],
-    []
+    [templates]
   );
 
   if (isLoading) return <div className="p-5">Loading fees...</div>;
@@ -266,19 +283,7 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
           <h2 className="text-xl font-semibold">Fees</h2>
 
           <button
-            onClick={() => {
-              const message = getBulkMessage(data);
-
-              if (!message) {
-                toast.error("No pending students");
-                return;
-              }
-
-              navigator.clipboard.writeText(message);
-              toast.success(
-                "Message copied! Paste in selected batch WhatsApp group."
-              );
-            }}
+            onClick={handleBulkMessage}
             className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
           >
             Copy Pending Message
@@ -287,8 +292,6 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
 
         {/* Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-3 items-end">
-
-          {/* Month */}
           <div className="lg:col-span-1">
             <label className="text-xs text-gray-500">Month</label>
             <input
@@ -299,11 +302,9 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
             />
           </div>
 
-          {/* Batch */}
           <div className="lg:col-span-2">
             <label className="text-xs text-gray-500">Batch</label>
             <Select
-              styles={{ container: (base) => ({ ...base, width: "100%" }) }}
               options={batchOptions}
               value={selectedBatch}
               onChange={setSelectedBatch}
@@ -312,11 +313,9 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
             />
           </div>
 
-          {/* Student */}
           <div className="lg:col-span-2">
             <label className="text-xs text-gray-500">Student / Course</label>
             <Select
-              styles={{ container: (base) => ({ ...base, width: "100%" }) }}
               options={enrollmentOptions}
               value={selectedEnrollment}
               onChange={setSelectedEnrollment}
@@ -326,7 +325,6 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
             />
           </div>
 
-          {/* Status */}
           <div className="lg:col-span-1">
             <label className="text-xs text-gray-500">Status</label>
             <select
@@ -340,7 +338,6 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
             </select>
           </div>
 
-          {/* Search Button */}
           <div className="lg:col-span-1">
             <button
               onClick={handleSearch}
@@ -350,7 +347,6 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
             </button>
           </div>
 
-          {/* Reset Button */}
           <div className="lg:col-span-1">
             <button
               onClick={handleReset}
@@ -359,7 +355,6 @@ ${new Date(f.Month).toLocaleDateString("ta-IN", {
               Reset
             </button>
           </div>
-
         </div>
       </div>
 
