@@ -74,9 +74,19 @@ export default function SignInForm() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg p-8">
 
+        {/* Logo */}
+        <div className="flex justify-center mb-4">
+          <img
+            src="/images/logo/logo_180.png"
+            alt="Vikosha Logo"
+            
+          />
+        </div>
+
+
         {/* Heading */}
 
-        <div className="mb-6 text-center">
+        <div className="mb-6">
           <h1 className="mb-2 font-semibold text-gray-800 text-2xl dark:text-white">
             Sign In
           </h1>

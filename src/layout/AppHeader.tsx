@@ -64,9 +64,13 @@ const AppHeader: React.FC = () => {
 
           {/* Mobile Logo */}
           <Link to="/home" className="lg:hidden">
-            <span className="text-xl font-bold text-gray-800 dark:text-white">
+            {/* <span className="text-xl font-bold text-gray-800 dark:text-white">
               {user?.instituteName || "Tuition Center"}
-            </span>
+            </span> */}
+            <img
+              src="/images/logo/logo_128.png"
+              alt="Logo"
+            />
           </Link>
 
           {/* Mobile Menu Button */}

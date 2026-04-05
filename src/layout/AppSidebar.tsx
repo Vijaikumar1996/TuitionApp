@@ -19,6 +19,7 @@ import {
   AlertHexaIcon
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { useSelector } from "react-redux";
 
 
 type NavItem = {
@@ -103,6 +104,8 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleSidebar, toggleMobileSidebar } = useSidebar();
   const location = useLocation();
 
+  const { user } = useSelector((state) => state.auth);
+
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main" | "others";
     index: number;
@@ -120,7 +123,7 @@ const AppSidebar: React.FC = () => {
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
-     // toggleSidebar();
+      // toggleSidebar();
     } else {
       toggleMobileSidebar();
     }
@@ -306,27 +309,36 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-          }`}
+        className={`${isMobileOpen ? "py-5 px-2 justify-start" : "py-2 pb-3 justify-center"} flex `}
       >
         <Link to="/home">
-          {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <span className="text-xl font-bold text-gray-800 dark:text-white">
-                Tuition App
+          {
+            isMobileOpen ? (
+              <span className="text-xl font-bold text-gray-800 dark:text-white mt-5">
+                {user?.instituteName || "Tuition Center"}
               </span>
-            </>
-          ) : (
-            <img
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
-          )}
+            ) :
+              isExpanded || isHovered ? (
+                <>
+                  {/* <span className="text-xl font-bold text-gray-800 dark:text-white">
+                Tuition App
+              </span> */}
+                  <img
+                    src="/images/logo/logo_180.png"
+                    alt="Logo"
+                  />
+                </>
+              ) : (
+                <img
+                  src="/images/logo/logo_48.png"
+                  alt="Logo"
+                  width={32}
+                  height={32}
+                />
+              )}
         </Link>
       </div>
-      <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+      <div className="flex flex-col h-full  overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
@@ -362,6 +374,20 @@ const AppSidebar: React.FC = () => {
           </div>
         </nav>
 
+      </div>
+      <div className="mt-auto mb-4">
+        <button
+          // onClick={handleLogout}
+          className="menu-item group menu-item-inactive w-full"
+        >
+          <span className="menu-item-icon-size menu-item-icon-inactive">
+            <AlertHexaIcon />
+          </span>
+
+          {(isExpanded || isHovered || isMobileOpen) && (
+            <span className="menu-item-text">Logout</span>
+          )}
+        </button>
       </div>
     </aside>
   );

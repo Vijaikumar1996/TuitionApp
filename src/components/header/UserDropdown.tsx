@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import ChangePasswordModal from "../auth/ChangePasswordModal";
 import { logout } from "../../store/slices/authSlice"; // 🔥 import logout
+import { UserCircleIcon, UserIcon } from "../../icons";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,23 +32,30 @@ export default function UserDropdown() {
     <div className="relative">
       <button
         onClick={toggleDropdown}
-        className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
+        className="flex items-center gap-2 px-2 py-1 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition"
       >
-        <span className="block mr-1 font-medium text-theme-sm">
+        {/* Icon */}
+        <UserIcon className="fill-gray-500 size-5 shrink-0" />
+
+        {/* Name */}
+        <span className="font-semibold text-sm whitespace-nowrap">
           {user?.name || user?.username || "User"}
         </span>
 
+        {/* Arrow */}
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
             }`}
           width="18"
-          height="20"
-          viewBox="0 0 18 20"
+          height="18"
+          viewBox="0 0 18 18"
         >
           <path
-            d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
+            d="M4.3125 6.65625L9 11.3437L13.6875 6.65625"
             stroke="currentColor"
             strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </button>

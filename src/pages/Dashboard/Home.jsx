@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <>
       <PageMeta
-        title="Tution App"
+        title="Vikosha | Tuition App "
         description="Dashboard"
       />
 
