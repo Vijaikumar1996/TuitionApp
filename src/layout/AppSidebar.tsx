@@ -309,7 +309,7 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`${isMobileOpen ? "py-5 px-2 justify-start" : "py-2 pb-3 justify-center"} flex `}
+        className={`${isMobileOpen ? "pt-10 pb-4 px-2 justify-start" : "py-2 pb-3 justify-center"} flex `}
       >
         <Link to="/home">
           {
@@ -375,7 +375,7 @@ const AppSidebar: React.FC = () => {
         </nav>
 
       </div>
-      <div className="mt-auto mb-4">
+      <div className={`${isMobileOpen ? "mt-auto mb-18" : "mt-auto mb-4"}`}>
         <button
           // onClick={handleLogout}
           className="menu-item group menu-item-inactive w-full"

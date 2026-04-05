@@ -103,9 +103,9 @@ export default function PaymentsPage() {
         cell: ({ getValue }) =>
           getValue()
             ? new Date(getValue()).toLocaleDateString("en-IN", {
-                month: "short",
-                year: "numeric",
-              })
+              month: "short",
+              year: "numeric",
+            })
             : "-",
       },
     ],
@@ -176,23 +176,24 @@ export default function PaymentsPage() {
           </div>
 
           {/* Search Button */}
-          <div className="lg:col-span-1">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-2 grid grid-cols-2 gap-2 mt-2 lg:mt-0">
+
+            {/* Search Button */}
             <button
               onClick={handleSearch}
               className="w-full bg-blue-600 text-white px-4 py-2 rounded"
             >
               Search
             </button>
-          </div>
 
-          {/* Reset Button */}
-          <div className="lg:col-span-1">
+            {/* Reset Button */}
             <button
               onClick={handleReset}
               className="w-full border px-4 py-2 rounded"
             >
               Reset
             </button>
+
           </div>
 
         </div>

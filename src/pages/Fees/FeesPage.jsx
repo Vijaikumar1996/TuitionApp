@@ -338,16 +338,16 @@ export default function FeesPage() {
             </select>
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-2 grid grid-cols-2 gap-2 mt-2 lg:mt-0">
             <button
               onClick={handleSearch}
               className="w-full bg-blue-600 text-white px-4 py-2 rounded"
             >
               Search
             </button>
-          </div>
 
-          <div className="lg:col-span-1">
+
+
             <button
               onClick={handleReset}
               className="w-full border px-4 py-2 rounded"

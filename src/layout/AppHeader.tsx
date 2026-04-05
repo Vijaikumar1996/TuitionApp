@@ -68,7 +68,7 @@ const AppHeader: React.FC = () => {
               {user?.instituteName || "Tuition Center"}
             </span> */}
             <img
-              src="/images/logo/logo_128.png"
+              src="/images/logo/logo_180.png"
               alt="Logo"
             />
           </Link>
