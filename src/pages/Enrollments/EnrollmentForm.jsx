@@ -59,7 +59,9 @@ export default function EnrollmentForm({
   onCancel,
   isLoading,
   showEndDate = false,
-  isEditMode = false
+  isEditMode = false,
+  handleAddStudent,
+  newStudentId
 }) {
 
 
@@ -139,10 +141,44 @@ export default function EnrollmentForm({
 
   /* ---------------- UI ---------------- */
 
+  useEffect(() => {
+    if (newStudentId && students.length > 0) {
+      setValue("studentId", String(newStudentId), {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [newStudentId, students, setValue]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <FormGrid cols={2}>
-        <SelectField
+        <div className="space-y-1">
+          <div className="flex justify-between items-center">
+            <label className="text-sm font-medium">
+              Student <span className="text-red-500">*</span>
+            </label>
+
+            <button
+              type="button"
+              onClick={handleAddStudent}
+              className="text-blue-600 text-sm hover:underline"
+            >
+              + Add New Student
+            </button>
+          </div>
+
+          <SelectField
+            name="studentId"
+            label="" // remove label since we added custom label
+            control={control}
+            options={students}
+            error={errors.studentId}
+            required
+            disabled={studentsLoading}
+          />
+        </div>
+        {/* <SelectField
           name="studentId"
           label="Student"
           control={control}
@@ -150,7 +186,7 @@ export default function EnrollmentForm({
           error={errors.studentId}
           required
           disabled={studentsLoading}
-        />
+        /> */}
 
         <SelectField
           name="courseId"

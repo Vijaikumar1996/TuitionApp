@@ -4,6 +4,10 @@ export const loginApi = (credentials) => {
     return apiClient.post("/Login", credentials);
 };
 
+export const logoutApi = () => {
+    return apiClient.post("/Logout");
+};
+
 export const changePasswordApi = async (payload) => {
     console.log("Change Password Payload:", payload);
     const response = await apiClient.post("/ChangePassword", payload);

@@ -3,17 +3,24 @@ import { useCreateStudent } from "../../queries/useStudent";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
-export default function CreateStudent() {
+export default function CreateStudent({ onCancel, onSuccess, isModal = false }) {
 
   const createStudent = useCreateStudent();
   const navigate = useNavigate();
 
   const handleCreate = (data) => {
-
     createStudent.mutate(data, {
       onSuccess: (res) => {
         toast.success(res?.message || "Student created successfully");
-        navigate("/students");
+
+        // ✅ If used in modal
+        if (isModal) {
+          onSuccess && onSuccess(res?.data);
+        } 
+        // ✅ If used as standalone page
+        else {
+          navigate("/students");
+        }
       },
       onError: (error) => {
         const message =
@@ -22,12 +29,11 @@ export default function CreateStudent() {
         toast.error(message);
       }
     });
-
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow">
-
+    <div className={`${isModal ? "" : "max-w-3xl mx-auto bg-white p-8 rounded-xl shadow"}`}>
+      
       <h2 className="text-xl font-semibold mb-6">
         Create Student
       </h2>
@@ -40,9 +46,14 @@ export default function CreateStudent() {
           parent_phone: ""
         }}
         onSubmit={handleCreate}
-        onCancel={() => navigate("/students")}
+        onCancel={() => {
+          if (isModal) {
+            onCancel && onCancel(); // close modal
+          } else {
+            navigate("/students"); // normal page
+          }
+        }}
       />
-
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 // Assume these icons are imported from an icon library
 import {
@@ -19,7 +19,8 @@ import {
   AlertHexaIcon
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser, logout } from "../store/slices/authSlice";
 
 
 type NavItem = {
@@ -29,13 +30,16 @@ type NavItem = {
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
 };
 
-const navItems: NavItem[] = [
+const noSubHeaderItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
     path: "/home"
     // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
+]
+
+const navItems: NavItem[] = [
   {
     icon: <DocsIcon />,
     name: "Courses",
@@ -46,6 +50,10 @@ const navItems: NavItem[] = [
     name: "Batches",
     path: "/batches",
   },
+
+];
+
+const othersItems: NavItem[] = [
   {
     icon: <GroupIcon />,
     name: "Students",
@@ -56,55 +64,25 @@ const navItems: NavItem[] = [
     name: "Enrollments",
     path: "/enrollments",
   },
-
-  {
-    icon: <ListIcon />,
-    name: "Payments",
-    path: "/payments",
-  },
   {
     icon: <DollarLineIcon />,
     name: "Fees",
     path: "/fees",
   },
-];
+  {
+    icon: <ListIcon />,
+    name: "Payments",
+    path: "/payments",
+  },
 
-const othersItems: NavItem[] = [
-  {
-    icon: <PieChartIcon />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-    ],
-  },
 ];
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleSidebar, toggleMobileSidebar } = useSidebar();
   const location = useLocation();
-
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main" | "others";
@@ -127,6 +105,16 @@ const AppSidebar: React.FC = () => {
     } else {
       toggleMobileSidebar();
     }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser()); // call API + clear state
+    } catch (err) {
+      dispatch(logout()); // fallback
+    }
+
+    navigate("/"); // 🔥 navigate AFTER logout
   };
 
   useEffect(() => {
@@ -342,21 +330,6 @@ const AppSidebar: React.FC = () => {
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
-              {/* <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
-                  ? "lg:justify-center"
-                  : "justify-start"
-                  }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
-                ) : (
-                  <HorizontaLDots className="size-6" />
-                )}
-              </h2> */}
-              {renderMenuItems(navItems, "main")}
-            </div>
-            {/* <div className="">
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
                   ? "lg:justify-center"
@@ -364,20 +337,50 @@ const AppSidebar: React.FC = () => {
                   }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
+                  "Dashboard"
+                ) : (
+                  <HorizontaLDots className="size-6" />
+                )}
+              </h2>
+              {renderMenuItems(noSubHeaderItems, "main")}
+            </div>
+            <div>
+              <h2
+                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
+                  ? "lg:justify-center"
+                  : "justify-start"
+                  }`}
+              >
+                {isExpanded || isHovered || isMobileOpen ? (
+                  "Setup"
+                ) : (
+                  <HorizontaLDots className="size-6" />
+                )}
+              </h2>
+              {renderMenuItems(navItems, "main")}
+            </div>
+            <div className="">
+              <h2
+                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
+                  ? "lg:justify-center"
+                  : "justify-start"
+                  }`}
+              >
+                {isExpanded || isHovered || isMobileOpen ? (
+                  "Operations"
                 ) : (
                   <HorizontaLDots />
                 )}
               </h2>
               {renderMenuItems(othersItems, "others")}
-            </div> */}
+            </div>
           </div>
         </nav>
 
       </div>
       <div className={`${isMobileOpen ? "mt-auto mb-18" : "mt-auto mb-4"}`}>
         <button
-          // onClick={handleLogout}
+          onClick={handleLogout}
           className="menu-item group menu-item-inactive w-full"
         >
           <span className="menu-item-icon-size menu-item-icon-inactive">

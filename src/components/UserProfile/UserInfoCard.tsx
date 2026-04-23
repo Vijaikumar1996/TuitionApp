@@ -52,7 +52,7 @@ export default function UserInfoCard() {
                 Phone
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.phone || "No phone"}
+                {user?.mobileNo || "No phone"}
               </p>
             </div>
 

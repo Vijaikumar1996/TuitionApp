@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginApi } from "../../services/authService";
+import { loginApi, logoutApi } from "../../services/authService";
 import { jwtDecode } from "jwt-decode";
 
 // 🔥 Restore token & user on app load
@@ -9,7 +9,12 @@ let user = null;
 
 if (token) {
   try {
-    user = jwtDecode(token);
+    //user = jwtDecode(token);
+    const userDetails = JSON.parse(localStorage.getItem("userDetails") || "{}");
+    user = {
+      ...jwtDecode(token),
+      ...userDetails
+    };
     console.log("Restored user from token:", user);
   } catch (err) {
     console.error("Invalid token");
@@ -27,8 +32,16 @@ export const loginUser = createAsyncThunk(
 
       const token = response.data.Token;
 
+      const userDetails = {
+        InstituteName: response.data.InstituteName,
+        name: response.data.Name,
+        email: response.data.Email,
+        mobileNo: response.data.MobileNo,
+      }
+
       // 🔥 Save token in localStorage
       localStorage.setItem("token", token);
+      localStorage.setItem("userDetails", JSON.stringify(userDetails));
 
       // 🔥 Decode token
       const decoded = jwtDecode(token);
@@ -36,12 +49,27 @@ export const loginUser = createAsyncThunk(
 
       return {
         token,
-        user: decoded,
+        user: {
+          ...decoded,
+          ...userDetails
+        }
       };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Login failed"
       );
+    }
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      await logoutApi();
+      return true;
+    } catch (error) {
+      return rejectWithValue("Logout failed");
     }
   }
 );
@@ -79,7 +107,13 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      }).addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
+
+        localStorage.removeItem("token");
       });
+
   },
 });
 

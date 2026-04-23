@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import ChangePasswordModal from "../auth/ChangePasswordModal";
-import { logout } from "../../store/slices/authSlice"; // 🔥 import logout
+import { logout, logoutUser } from "../../store/slices/authSlice"; // 🔥 import logout
 import { UserCircleIcon, UserIcon } from "../../icons";
 
 export default function UserDropdown() {
@@ -12,6 +12,7 @@ export default function UserDropdown() {
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   console.log("User in Dropdown:", user);
 
@@ -23,9 +24,14 @@ export default function UserDropdown() {
     setIsOpen(false);
   }
 
-  // 🔥 Handle logout
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser()); // call API + clear state
+    } catch (err) {
+      dispatch(logout()); // fallback
+    }
+
+    navigate("/"); // 🔥 navigate AFTER logout
   };
 
   return (
@@ -102,13 +108,12 @@ export default function UserDropdown() {
         </ul>
 
         {/* 🔥 LOGOUT */}
-        <Link
-          to="/"
+        <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-3 py-2 mt-3"
         >
           Sign out
-        </Link>
+        </button>
       </Dropdown>
 
       <ChangePasswordModal
