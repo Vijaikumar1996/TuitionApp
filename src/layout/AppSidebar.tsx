@@ -303,9 +303,9 @@ const AppSidebar: React.FC = () => {
           {
             isMobileOpen ? (
               <span className="text-xl font-bold text-gray-800 dark:text-white mt-5">
-                {user?.instituteName || "Tuition Center"}
+                {user?.InstituteName || "Tuition Center"}
               </span>
-            ) :
+            ) :            
               isExpanded || isHovered ? (
                 <>
                   {/* <span className="text-xl font-bold text-gray-800 dark:text-white">

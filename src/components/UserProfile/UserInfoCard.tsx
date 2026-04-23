@@ -25,7 +25,7 @@ export default function UserInfoCard() {
                 Institute Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.instituteName || "Tuition Center"}
+                {user?.InstituteName || "Tuition Center"}
               </p>
             </div>
 

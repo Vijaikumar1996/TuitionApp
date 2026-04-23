@@ -86,7 +86,7 @@ const AppHeader: React.FC = () => {
         {/* CENTER SECTION */}
         <div className="hidden lg:flex flex-1 justify-center items-center">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white whitespace-nowrap">
-            {user?.instituteName || "Tuition Center"}
+            {user?.InstituteName || "Tuition Center"}
           </h2>
         </div>
 
