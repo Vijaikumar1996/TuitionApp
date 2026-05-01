@@ -309,7 +309,7 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`${isMobileOpen ? "pt-10 pb-4 px-2 justify-start" : "py-2 pb-3 justify-center"} flex `}
+        className={`${isMobileOpen ? "pt-10 pb-4 px-2 justify-start" : "py-1 pb-1 justify-center"} flex `}
       >
         <Link to="/home">
           {
