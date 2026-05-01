@@ -1,15 +1,16 @@
 import { useNavigate, useLocation } from "react-router";
-import { CalenderIcon, DollarLineIcon, GroupIcon, ListIcon } from "../icons";
+import { CalenderIcon, DollarLineIcon, GridIcon, GroupIcon, ListIcon } from "../icons";
 
 const BottomNav = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const tabs = [
+        { name: "Home", path: "/home", icon: <GridIcon fontSize={20} /> },
         { name: "Batch", path: "/batches", icon: <CalenderIcon fontSize={20} /> },
         { name: "Enroll", path: "/enrollments", icon: <GroupIcon fontSize={20} /> },
         { name: "Fees", path: "/fees", icon: <DollarLineIcon fontSize={20} /> },
-        { name: "Payments", path: "/payments", icon: <ListIcon fontSize={20} /> },
+
     ];
 
     return (

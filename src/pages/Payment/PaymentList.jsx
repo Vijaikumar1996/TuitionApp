@@ -128,7 +128,7 @@ export default function PaymentsPage() {
         <h2 className="text-xl font-semibold mb-3">Payments</h2>
 
         {/* ✅ FINAL GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-3 items-end">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-8 gap-3 items-end">
 
           {/* Month */}
           <div className="lg:col-span-1">
@@ -184,7 +184,7 @@ export default function PaymentsPage() {
           </div>
 
           {/* Search Button */}
-          <div className="col-span-1 sm:col-span-2 lg:col-span-2 grid grid-cols-2 gap-2 mt-2 lg:mt-0">
+          <div className="col-span-2 sm:col-span-2 lg:col-span-2 grid grid-cols-2 gap-2 mt-2 lg:mt-0">
 
             {/* Search Button */}
             <button

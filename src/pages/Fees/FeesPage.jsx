@@ -301,7 +301,7 @@ export default function FeesPage() {
         </div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-3 items-end">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-8 gap-3 items-end">
           <div className="lg:col-span-1">
             <label className="text-xs text-gray-500">Month</label>
             <input
@@ -348,7 +348,7 @@ export default function FeesPage() {
             </select>
           </div>
 
-          <div className="col-span-1 sm:col-span-2 lg:col-span-2 grid grid-cols-2 gap-2 mt-2 lg:mt-0">
+          <div className="col-span-2 sm:col-span-2 lg:col-span-2 grid grid-cols-2 gap-2 mt-2 lg:mt-0">
             <button
               onClick={handleSearch}
               className="w-full bg-blue-600 text-white px-4 py-2 rounded"
