@@ -26,6 +26,7 @@ export default function FeesPage() {
 
   // ✅ Fetch templates once
   const { data: templates = {} } = useMessageTemplates();
+  
 
   const [filters, setFilters] = useState({
     month: getCurrentMonth(),

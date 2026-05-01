@@ -296,7 +296,7 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={`fixed mt-16 lg:pb-0 pb-20 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${isExpanded || isMobileOpen
           ? "w-[290px]"
           : isHovered
@@ -390,18 +390,15 @@ const AppSidebar: React.FC = () => {
         </nav>
 
       </div>
-      <div className={`${isMobileOpen ? "mt-auto mb-18" : "mt-auto mb-4"}`}>
+      <div
+        className={`${isMobileOpen ? "pb-12" : "pb-4"} sticky bottom-0 bg-white dark:bg-gray-900 py-3`}
+      >
         <button
           onClick={handleLogout}
-          className="menu-item group menu-item-inactive w-full"
+          className="menu-item w-full flex items-center gap-2"
         >
-          <span className="menu-item-icon-size menu-item-icon-inactive">
-            <AlertHexaIcon />
-          </span>
-
-          {(isExpanded || isHovered || isMobileOpen) && (
-            <span className="menu-item-text">Logout</span>
-          )}
+          <AlertHexaIcon />
+          <span>Logout</span>
         </button>
       </div>
     </aside>
