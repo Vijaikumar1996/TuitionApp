@@ -84,7 +84,14 @@ export default function PaymentsPage() {
     () => [
       { accessorKey: "Student_Name", header: "Student" },
       { accessorKey: "Course_Name", header: "Course" },
-      { accessorKey: "Batch_Name", header: "Batch" },
+      {
+        accessorKey: "Batch_Name", header: "Batch",
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap">
+            {(row.original.Batch_Name)}
+          </span>
+        ),
+      },
       {
         accessorKey: "Amount",
         header: "Amount",
@@ -100,13 +107,14 @@ export default function PaymentsPage() {
       {
         accessorKey: "Month",
         header: "Fee Month",
-        cell: ({ getValue }) =>
-          getValue()
-            ? new Date(getValue()).toLocaleDateString("en-IN", {
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap">
+            {(new Date(getValue()).toLocaleDateString("en-IN", {
               month: "short",
               year: "numeric",
-            })
-            : "-",
+            }))}
+          </span>
+        ),
       },
     ],
     []

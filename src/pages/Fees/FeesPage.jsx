@@ -181,15 +181,25 @@ export default function FeesPage() {
   const columns = useMemo(
     () => [
       { accessorKey: "Student_Name", header: "Student" },
-      { accessorKey: "Batch_Name", header: "Batch" },
+      {
+        accessorKey: "Batch_Name", header: "Batch",
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap">
+            {(row.original.Batch_Name)}
+          </span>
+        ),
+      },
       {
         accessorKey: "Month",
         header: "Month",
-        cell: ({ row }) =>
-          new Date(row.original.Month).toLocaleDateString("en-IN", {
-            month: "short",
-            year: "numeric",
-          }),
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap">
+            {(new Date(row.original.Month).toLocaleDateString("en-IN", {
+              month: "short",
+              year: "numeric",
+            }))}
+          </span>
+        ),
       },
       {
         accessorKey: "Amount_Due",
