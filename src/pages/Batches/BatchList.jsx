@@ -39,7 +39,7 @@ export default function BatchList() {
           : "bg-red-100 text-red-600 cursor-not-allowed";
 
       const handleClick = (language, count) => {
-        if (count === 0) return; // ❌ prevent click if full
+        if (count === 0) return;
 
         navigate(
           `/enrollment/create?batchId=${batchId}&language=${language}`
@@ -47,17 +47,17 @@ export default function BatchList() {
       };
 
       return (
-        <div className="flex gap-2 text-xs">
+        <div className="flex gap-2 text-[10px] md:text-xs whitespace-nowrap">
           <span
             onClick={() => handleClick("English", eng)}
-            className={`px-2 py-1 rounded ${getStyle(eng)}`}
+            className={`px-2 py-1 rounded flex-shrink-0 ${getStyle(eng)}`}
           >
             Eng: <span className="font-bold">{eng}</span>
           </span>
 
           <span
             onClick={() => handleClick("Tamil", tam)}
-            className={`px-2 py-1 rounded ${getStyle(tam)}`}
+            className={`px-2 py-1 rounded flex-shrink-0 ${getStyle(tam)}`}
           >
             Tam: <span className="font-bold">{tam}</span>
           </span>
@@ -72,11 +72,14 @@ export default function BatchList() {
         accessorKey: "name",
         header: "Batch Name",
         cell: (info) => (
-          <span className="font-medium">{info.getValue()}</span>
-        )
+          <span className="font-medium whitespace-nowrap">
+            {info.getValue()}
+          </span>
+        ),
       },
-      // 👇 Inject here conditionally
+
       ...(isTypewriting ? [machineColumn] : []),
+
       {
         id: "timing",
         header: "Timing",
@@ -85,14 +88,12 @@ export default function BatchList() {
           const end = row.original.end_time?.slice(0, 5);
 
           return (
-            <span className="text-gray-600">
+            <span className="text-gray-600 whitespace-nowrap">
               {start} - {end}
             </span>
           );
-        }
+        },
       },
-
-
 
       {
         accessorKey: "status",
@@ -102,30 +103,31 @@ export default function BatchList() {
 
           return (
             <span
-              className={`px-2 py-1 text-xs rounded-full ${status === "Active"
-                ? "bg-green-100 text-green-700"
-                : status === "Completed"
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-gray-100 text-gray-600"
+              className={`px-2 py-1 text-xs rounded-full whitespace-nowrap ${status === "Active"
+                  ? "bg-green-100 text-green-700"
+                  : status === "Completed"
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-gray-100 text-gray-600"
                 }`}
             >
               {status}
             </span>
           );
-        }
+        },
       },
+
       {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => (
           <button
             onClick={() => setEditBatch(row.original)}
-            className="text-blue-600 hover:underline"
+            className="text-blue-600 hover:underline whitespace-nowrap"
           >
             Edit
           </button>
-        )
-      }
+        ),
+      },
     ];
 
     return baseColumns;
@@ -136,30 +138,18 @@ export default function BatchList() {
   }
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow">
-
+    <div className="bg-white p-5 rounded-xl shadow overflow-x-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold">Batches</h2>
 
         <button
           onClick={() => navigate("/batch/create")}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 whitespace-nowrap"
         >
           + Add Batch
         </button>
       </div>
-
-      {/* Search */}
-      {/* <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Search batches..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-64 border px-3 py-2 rounded"
-        />
-      </div> */}
 
       {/* Table */}
       <DataTable
@@ -178,7 +168,6 @@ export default function BatchList() {
           onClose={() => setEditBatch(null)}
         />
       )}
-
     </div>
   );
 }

@@ -60,6 +60,11 @@ export default function EnrollmentList() {
       {
         accessorKey: "batch_name",
         header: "Batch",
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap">
+            {(row.original.batch_name)}
+          </span>
+        ),
       },
 
 
@@ -69,7 +74,11 @@ export default function EnrollmentList() {
       {
         accessorKey: "startDate",
         header: "Start Date",
-        cell: ({ row }) => formatDate(row.original.startDate),
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap">
+            {formatDate(row.original.startDate)}
+          </span>
+        ),
       },
 
       {
