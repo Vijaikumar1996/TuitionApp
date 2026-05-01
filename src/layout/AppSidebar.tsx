@@ -391,7 +391,7 @@ const AppSidebar: React.FC = () => {
 
       </div>
       <div
-        className={`${isMobileOpen ? "pb-12" : "pb-4"} sticky bottom-0 bg-white dark:bg-gray-900 py-3`}
+        className={`${isMobileOpen ? "pb-20" : "pb-4"} sticky bottom-0 bg-white dark:bg-gray-900 py-3`}
       >
         <button
           onClick={handleLogout}
