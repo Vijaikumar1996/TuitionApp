@@ -16,8 +16,10 @@ import BatchList from "./pages/Batches/BatchList";
 import CreateBatch from "./pages/Batches/CreateBatch";
 import CreatePayment from "./pages/Payment/CreatePayment";
 import PaymentList from "./pages/Payment/PaymentList";
-import PendingList from "./pages/Pendings/PendingList";
+import MachineList from "./pages/Machines/MachineList";
+import CreateMachine from "./pages/Machines/CreateMachine";
 import Reports from "./pages/Reports/Reports";
+
 
 
 
@@ -71,8 +73,8 @@ export default function App() {
               <Route path="/fees" element={<FeesPage />} />
               <Route path="/reports" element={<Reports />} />
 
-
-
+              <Route path="/machines" element={<MachineList />} />
+              <Route path="/machine/create" element={<CreateMachine />} />
 
 
 

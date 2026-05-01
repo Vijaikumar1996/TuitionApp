@@ -4,13 +4,7 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { useCreateBatch } from "../../queries/useBatches";
 import toast from "react-hot-toast";
 
-/* Dummy Courses */
 
-const courses = [
-    { id: 1, name: "8th Standard" },
-    { id: 2, name: "9th Standard" },
-    { id: 3, name: "Typewriting Lower" },
-];
 
 export default function CreateBatch() {
     const navigate = useNavigate();
@@ -24,8 +18,9 @@ export default function CreateBatch() {
                 navigate("/batches");
             },
             onError: (error) => {
+                console.log(error);
                 const message =
-                    error.response?.data || "Failed to create batch";
+                    error?.response?.data?.message || "Failed to create batch";
 
                 toast.error(message);
             }
@@ -43,8 +38,7 @@ export default function CreateBatch() {
                 Create Batch
             </h2>
 
-            <BatchForm
-                //  courses={courses}
+            <BatchForm               
                 defaultValues={{
                     name: "",
                     courseId: "",

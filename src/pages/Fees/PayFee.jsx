@@ -13,6 +13,8 @@ export default function PayFee({
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [notes, setNotes] = useState("");
 
+  console.log(fee);
+
   useEffect(() => {
     if (fee) {
       setTotalFee(fee.Amount_Due);
@@ -79,10 +81,9 @@ export default function PayFee({
   };
 
   const getBtnClass = (type) =>
-    `px-3 py-1 rounded text-sm border ${
-      selectedOption === type
-        ? "bg-blue-600 text-white"
-        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+    `px-3 py-1 rounded text-sm border ${selectedOption === type
+      ? "bg-blue-600 text-white"
+      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
     }`;
 
   return (
@@ -108,41 +109,48 @@ export default function PayFee({
             <p>
               Balance:{" "}
               <span
-                className={`font-semibold ${
-                  balance > 0 ? "text-red-600" : "text-green-600"
-                }`}
+                className={`font-semibold ${balance > 0 ? "text-red-600" : "text-green-600"
+                  }`}
               >
                 ₹{balance}
               </span>
             </p>
           </div>
 
-          {/* Total Fee */}
-          <div className="mb-4">
-            <label className="text-sm font-medium">Total Fee</label>
-            <input
-              type="number"
-              value={totalFee}
-              onChange={(e) => {
-                setTotalFee(Number(e.target.value));
-                setSelectedOption(null);
-              }}
-              className="w-full border px-3 py-2 rounded mt-1"
-            />
-          </div>
 
-          {/* Quick Buttons */}
-          <div className="flex gap-2 mb-4">
-            <button onClick={handleFull} className={getBtnClass("full")}>
-              Full
-            </button>
-            <button onClick={handleHalf} className={getBtnClass("half")}>
-              Half
-            </button>
-            <button onClick={handleNoFee} className={getBtnClass("nofee")}>
-              No Fee
-            </button>
-          </div>
+
+          {
+            fee.isFirstMonth && (
+              <>
+                {/* Total Fee */}
+                <div className="mb-4">
+                  <label className="text-sm font-medium">Total Fee</label>
+                  <input
+                    type="number"
+                    value={totalFee}
+                    onChange={(e) => {
+                      setTotalFee(Number(e.target.value));
+                      setSelectedOption(null);
+                    }}
+                    className="w-full border px-3 py-2 rounded mt-1"
+                  />
+                </div>
+                {/* Quick Buttons */}
+                <div className="flex gap-2 mb-4">
+                  <button onClick={handleFull} className={getBtnClass("full")}>
+                    Full
+                  </button>
+                  <button onClick={handleHalf} className={getBtnClass("half")}>
+                    Half
+                  </button>
+                  <button onClick={handleNoFee} className={getBtnClass("nofee")}>
+                    No Fee
+                  </button>
+                </div>
+              </>
+            )
+          }
+
 
           {/* Mode + Payment */}
           <div className="mb-4 grid grid-cols-2 gap-3">
@@ -201,11 +209,10 @@ export default function PayFee({
             <button
               onClick={handleSubmit}
               disabled={loading || !hasChanges}
-              className={`px-4 py-2 rounded text-white ${
-                loading || !hasChanges
-                  ? "bg-gray-400"
-                  : "bg-blue-600 hover:bg-blue-700"
-              }`}
+              className={`px-4 py-2 rounded text-white ${loading || !hasChanges
+                ? "bg-gray-400"
+                : "bg-blue-600 hover:bg-blue-700"
+                }`}
             >
               {loading ? "Processing..." : "Save & Pay"}
             </button>

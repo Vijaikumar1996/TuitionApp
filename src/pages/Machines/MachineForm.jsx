@@ -6,28 +6,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormGrid from "../../components/form/FormGrid";
 import SelectField from "../../components/form/form-input/SelectField";
 import InputField from "../../components/form/form-input/InputField";
-import TimeField from "../../components/form/form-input/TimeField";
 
 /* ---------------- Schema ---------------- */
 
-const batchSchema = z
-  .object({
-    name: z.string().min(1, "Batch name is required"),
-    startTime: z.string().min(1, "Start time is required"),
-    endTime: z.string().min(1, "End time is required"),
-    status: z.enum(["Active", "Completed", "Inactive"]),
-  })
-  .refine(
-    (data) => data.endTime > data.startTime,
-    {
-      message: "End time must be after start time",
-      path: ["endTime"],
-    }
-  );
+const machineSchema = z.object({
+  machine_name: z.string().min(1, "Machine name is required"),
+  language: z.string().min(1, "Language is required"),
+  status: z.enum(["active", "inactive"]),
+});
 
 /* ---------------- Component ---------------- */
 
-export default function BatchForm({
+export default function MachineForm({
   defaultValues,
   onSubmit,
   onCancel,
@@ -39,63 +29,73 @@ export default function BatchForm({
     reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(batchSchema),
+    resolver: zodResolver(machineSchema),
     defaultValues,
   });
 
+  /* Reset form when editing */
+
   useEffect(() => {
     if (defaultValues) {
-      reset(defaultValues);
+      reset({
+        ...defaultValues,
+        status: defaultValues.status || "active",
+      });
     }
   }, [defaultValues, reset]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-      {/* Row 1: Batch Name + Status */}
+      {/* Machine Name + Language */}
+
       <FormGrid>
+
         <InputField
-          name="name"
-          label="Batch Name"
+          name="machine_name"
+          label="Machine Name"
           control={control}
-          error={errors.name}
-          placeholder="Enter batch name"
+          error={errors.machine_name}
+          placeholder="Enter machine name"
           required
         />
+
+        <SelectField
+          name="language"
+          label="Language"
+          control={control}
+          options={[
+            { id: "English", name: "English" },
+            { id: "Tamil", name: "Tamil" },
+          ]}
+          error={errors.language}
+          required
+        />
+
+      </FormGrid>
+
+
+      {/* Status */}
+
+      <FormGrid>
 
         <SelectField
           name="status"
           label="Status"
           control={control}
           options={[
-            { id: "Active", name: "Active" },
-            { id: "Completed", name: "Completed" },
-            { id: "Inactive", name: "Inactive" },
+            { id: "active", name: "Active" },
+            { id: "inactive", name: "Inactive" },
           ]}
         />
+
       </FormGrid>
 
-      {/* Row 2: Start Time + End Time */}
-      <FormGrid>
-        <TimeField
-          name="startTime"
-          control={control}
-          label="Start Time"
-          error={errors.startTime}
-          required
-        />
-
-        <TimeField
-          name="endTime"
-          control={control}
-          label="End Time"
-          error={errors.endTime}
-          required
-        />
-      </FormGrid>
 
       {/* Buttons */}
+
       <div className="flex justify-end gap-3 pt-6">
+
         <button
           type="button"
           onClick={onCancel}
@@ -108,8 +108,9 @@ export default function BatchForm({
           type="submit"
           className="px-5 py-2 bg-blue-600 text-white rounded"
         >
-          {isLoading ? "Saving..." : "Save Batch"}
+          {isLoading ? "Saving..." : "Save Machine"}
         </button>
+
       </div>
 
     </form>

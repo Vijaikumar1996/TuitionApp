@@ -345,9 +345,6 @@ export default function FeesPage() {
             >
               Search
             </button>
-
-
-
             <button
               onClick={handleReset}
               className="w-full border px-4 py-2 rounded"

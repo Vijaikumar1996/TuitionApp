@@ -1,3 +1,4 @@
+import Select from "react-select";
 import { Controller } from "react-hook-form";
 
 export default function SelectField({
@@ -10,6 +11,11 @@ export default function SelectField({
     disabled = false,
     required = false,
 }) {
+    const formattedOptions = options.map(item => ({
+        value: String(item.id),
+        label: item.name,
+    }));
+
     return (
         <div>
             {label && (
@@ -22,25 +28,29 @@ export default function SelectField({
             <Controller
                 name={name}
                 control={control}
-                render={({ field }) => (
-                    <select
-                        {...field}
-                        disabled={disabled}
-                        className="w-full border px-3 py-2 rounded"
-                    >
-                        <option value="">{placeholder}</option>
+                render={({ field }) => {
+                    const selectedOption = formattedOptions.find(
+                        opt => opt.value === String(field.value)
+                    );
 
-                        {options.map((item) => (
-                            <option key={item.id} value={(item.id)}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </select>
-                )}
+                    return (
+                        <Select
+                            options={formattedOptions}
+                            value={selectedOption || null} // ✅ THIS FIXES DEFAULT VALUE
+                            onChange={(selected) =>
+                                field.onChange(selected ? selected.value : "")
+                            }
+                            placeholder={placeholder}
+                            isDisabled={disabled}
+                        />
+                    );
+                }}
             />
 
             {error && (
-                <p className="text-red-500 text-sm mt-1">{error.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                    {error.message}
+                </p>
             )}
         </div>
     );

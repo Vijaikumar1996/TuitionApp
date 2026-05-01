@@ -39,19 +39,7 @@ const noSubHeaderItems: NavItem[] = [
   },
 ]
 
-const navItems: NavItem[] = [
-  {
-    icon: <DocsIcon />,
-    name: "Courses",
-    path: "/courses"
-  },
-  {
-    icon: <CalenderIcon />,
-    name: "Batches",
-    path: "/batches",
-  },
 
-];
 
 const othersItems: NavItem[] = [
   {
@@ -83,6 +71,30 @@ const AppSidebar: React.FC = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+
+  const isTypewriting = user?.InstituteType === "Typewriting";
+
+  const navItems: NavItem[] = [
+    {
+      icon: <DocsIcon />,
+      name: "Courses",
+      path: "/courses"
+    },
+    ...(isTypewriting
+      ? [
+        {
+          icon: <CalenderIcon />,
+          name: "Machines",
+          path: "/machines",
+        },
+      ]
+      : []),
+    {
+      icon: <CalenderIcon />,
+      name: "Batches",
+      path: "/batches",
+    },
+  ];
 
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main" | "others";
@@ -305,7 +317,7 @@ const AppSidebar: React.FC = () => {
               <span className="text-xl font-bold text-gray-800 dark:text-white mt-5">
                 {user?.InstituteName || "Tuition Center"}
               </span>
-            ) :            
+            ) :
               isExpanded || isHovered ? (
                 <>
                   {/* <span className="text-xl font-bold text-gray-800 dark:text-white">

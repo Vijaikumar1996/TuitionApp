@@ -19,6 +19,7 @@ if (token) {
   } catch (err) {
     console.error("Invalid token");
     localStorage.removeItem("token");
+    localStorage.removeItem("userDetails");
   }
 }
 
@@ -34,6 +35,7 @@ export const loginUser = createAsyncThunk(
 
       const userDetails = {
         InstituteName: response.data.InstituteName,
+        InstituteType: response.data.InstituteType,
         name: response.data.Name,
         email: response.data.Email,
         mobileNo: response.data.MobileNo,
@@ -64,13 +66,13 @@ export const loginUser = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
-  async (_, { rejectWithValue }) => {
+  async () => {
     try {
       await logoutApi();
-      return true;
     } catch (error) {
-      return rejectWithValue("Logout failed");
+      console.warn("Logout API failed");
     }
+    return true; // always succeed
   }
 );
 
@@ -89,6 +91,7 @@ const authSlice = createSlice({
 
       // 🔥 Remove token
       localStorage.removeItem("token");
+      localStorage.removeItem("userDetails");
     },
   },
   extraReducers: (builder) => {
@@ -112,6 +115,14 @@ const authSlice = createSlice({
         state.token = null;
 
         localStorage.removeItem("token");
+        localStorage.removeItem("userDetails");
+      })
+      .addCase(logoutUser.rejected, (state) => {
+        state.user = null;
+        state.token = null;
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("userDetails");
       });
 
   },
