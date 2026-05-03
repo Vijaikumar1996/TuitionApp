@@ -30,6 +30,8 @@ import EnrollmentList from "./pages/Enrollments/EnrollmentList";
 import CreateEnrollment from "./pages/Enrollments/CreateEnrollment";
 import FeesPage from "./pages/Fees/FeesPage";
 import PrivateRoute from "./PrivateRoute";
+import InstituteList from "./pages/Institute/InstituteList";
+import CreateInstitute from "./pages/Institute/CreateInstitute";
 
 export default function App() {
   const isFetching = useIsFetching();
@@ -96,6 +98,9 @@ export default function App() {
 
               <Route path="/machines" element={<MachineList />} />
               <Route path="/machine/create" element={<CreateMachine />} />
+
+              <Route path="/institutes" element={<InstituteList />} />
+              <Route path="/institute/create" element={<CreateInstitute />} />
 
               {/* Charts */}
               <Route path="/line-chart" element={<LineChart />} />
